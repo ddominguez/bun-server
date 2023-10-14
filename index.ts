@@ -6,12 +6,12 @@ const server = Bun.serve({
       return new Response('the homepage')
     }
 
-    if (url.pathname === '/test') {
+    if (url.pathname === '/test-html') {
       const html = Bun.file("./templates/test.html")
       return new Response(html)
     }
 
-    if (url.pathname === '/get-data') {
+    if (url.pathname === '/get-json') {
       if (req.method !== 'GET') {
         return new Response('request not allowed.', { status: 405 })
       }
@@ -49,5 +49,8 @@ const server = Bun.serve({
   }
 })
 
-console.log(`Listening on http://${server.hostname}:${server.port}`)
+if (import.meta.path === Bun.main) {
+  console.log(`Listening on http://${server.hostname}:${server.port}`)
+}
 
+export { server }
