@@ -1,6 +1,6 @@
 import { Database } from "bun:sqlite";
 
-const db = new Database("sqlite.db")
+const db = new Database("sqlite.db", { create: true })
 
 db.run(`CREATE TABLE IF NOT EXISTS posts (
   id INTEGER PRIMARY KEY,
