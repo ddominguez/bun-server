@@ -7,7 +7,7 @@ const server = Bun.serve({
     }
 
     if (url.pathname === "/test-html") {
-      const html = Bun.file("./templates/test.html");
+      const html = Bun.file("./src/templates/test.html");
       return new Response(html);
     }
 
