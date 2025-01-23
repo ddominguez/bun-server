@@ -1,3 +1,7 @@
+import { Database } from "bun:sqlite";
+
+const db = new Database("sqlite.db")
+
 const server = Bun.serve({
   async fetch(req) {
     const url = new URL(req.url);
@@ -26,6 +30,16 @@ const server = Bun.serve({
         },
       ];
       return Response.json(data);
+    }
+
+    if (url.pathname === "/api/posts") {
+      try {
+        const posts = db.query("select * from posts")
+        return Response.json(posts.all());
+      } catch (error) {
+        console.error(error)
+        return new Response("server error", { status: 500 })
+      }
     }
 
     if (url.pathname === "/submit-to-me") {
