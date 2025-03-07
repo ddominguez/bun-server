@@ -3,19 +3,17 @@ import { Database } from "bun:sqlite";
 const db = new Database("sqlite.db", { create: true })
 
 const server = Bun.serve({
-  async fetch(req) {
-    const url = new URL(req.url);
-
-    if (url.pathname === "/") {
-      return new Response("the homepage");
-    }
-
-    if (url.pathname === "/test-html") {
-      const html = Bun.file("./src/templates/test.html");
-      return new Response(html);
-    }
-
-    if (url.pathname === "/get-json") {
+  routes: {
+    "/": {
+      GET: () => new Response('the homepage')
+    },
+    "/test-html": {
+      GET: () => {
+        const html = Bun.file("./src/templates/test.html");
+        return new Response(html);
+      }
+    },
+    "/get-json": (req) => {
       if (req.method !== "GET") {
         return new Response("request not allowed.", { status: 405 });
       }
@@ -30,19 +28,19 @@ const server = Bun.serve({
         },
       ];
       return Response.json(data);
-    }
-
-    if (url.pathname === "/api/posts") {
-      try {
-        const posts = db.query("select * from posts")
-        return Response.json(posts.all());
-      } catch (error) {
-        console.error(error)
-        return new Response("server error", { status: 500 })
+    },
+    "/api/posts": {
+      GET: () => {
+        try {
+          const posts = db.query("select * from posts")
+          return Response.json(posts.all());
+        } catch (error) {
+          console.error(error)
+          return new Response("server error", { status: 500 })
+        }
       }
-    }
-
-    if (url.pathname === "/submit-to-me") {
+    },
+    "/submit-to-me": async (req) => {
       if (req.method !== "POST") {
         return new Response("request not allowed", { status: 405 });
       }
@@ -57,8 +55,9 @@ const server = Bun.serve({
 
       const reqBody = await req.json();
       return Response.json(reqBody);
-    }
-
+    },
+  },
+  fetch() {
     return new Response("404 - page not found", { status: 404 });
   },
 });
