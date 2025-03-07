@@ -1,5 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import { server } from "./index.ts";
+import type { SampleData } from "./index.ts"
 
 describe("404 response", () => {
   it("must be triggered when path not found", async () => {
@@ -29,7 +30,7 @@ describe("test-html request", () => {
 describe("get-json request", () => {
   it("must return success response", async () => {
     const res = await fetch(`${server.url}get-json`);
-    const data = await res.json();
+    const data = await res.json() as SampleData[];
     expect(res.status).toEqual(200);
     expect(data.length).toEqual(2);
     expect(data).toEqual([
